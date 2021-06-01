@@ -25,3 +25,13 @@ lazy val flinkStream = (project in file("flink-stream"))
       "org.apache.flink" %% "flink-scala"           % FlinkVersion
     )
   )
+
+val SparkVersion = "2.4.5"
+lazy val sparkStream = (project in file("spark-stream"))
+  .settings(
+    name := "spark-stream",
+    scalaVersion := "2.12.10",
+    libraryDependencies ++= Seq(
+      "org.apache.spark" %% "spark-core" % SparkVersion
+    )
+  )
