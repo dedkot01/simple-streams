@@ -1,6 +1,8 @@
 package dedkot
 
 import org.apache.flink.api.common.state.{ ValueState, ValueStateDescriptor }
+import org.apache.flink.configuration.Configuration
+import org.apache.flink.metrics.Counter
 import org.apache.flink.streaming.api.functions.co.CoProcessFunction
 import org.apache.flink.streaming.api.scala.{ createTypeInformation, StreamExecutionEnvironment }
 import org.apache.flink.util.Collector
@@ -31,15 +33,22 @@ object CoFunctionsStream extends App {
     .print
 
   env.execute("counter good numbers")
+  Thread.sleep(60000)
 }
 
 case class CounterGoodNumbers(size: Int, countGoodNumbers: Int)
 
 class CounterGoodNumbersFunction extends CoProcessFunction[(Int, Int), (Int, Int), CounterGoodNumbers] {
 
+  @transient private var counter: Counter = _
+
   lazy val state: ValueState[CounterGoodNumbers] = getRuntimeContext.getState(
     new ValueStateDescriptor[CounterGoodNumbers]("state counter", classOf[CounterGoodNumbers])
   )
+
+  override def open(parameters: Configuration): Unit = {
+    counter = getRuntimeContext.getMetricGroup.counter("MyCounter")
+  }
 
   override def processElement1(
     value: (Int, Int),
@@ -62,6 +71,8 @@ class CounterGoodNumbersFunction extends CoProcessFunction[(Int, Int), (Int, Int
     ctx: CoProcessFunction[(Int, Int), (Int, Int), CounterGoodNumbers]#Context,
     out: Collector[CounterGoodNumbers]
   ): Unit = {
+    counter.inc()
+
     val currentState = Option(state.value())
     currentState match {
       case None =>
