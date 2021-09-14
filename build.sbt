@@ -20,18 +20,26 @@ lazy val flinkStream = (project in file("flink-stream"))
     name := "flink-stream",
     scalaVersion := "2.12.13",
     libraryDependencies ++= Seq(
-      "org.apache.flink" %% "flink-clients"         % FlinkVersion,
-      "org.apache.flink" %% "flink-streaming-scala" % FlinkVersion,
-      "org.apache.flink" %% "flink-scala"           % FlinkVersion
+      "org.apache.flink" %% "flink-clients"            % FlinkVersion,
+      "org.apache.flink" %% "flink-streaming-scala"    % FlinkVersion,
+      "org.apache.flink" %% "flink-scala"              % FlinkVersion,
+      "org.apache.flink" % "flink-metrics-dropwizard"  % FlinkVersion,
+      "org.apache.flink" %% "flink-runtime-web"        % FlinkVersion,
+      "org.apache.flink" %% "flink-metrics-prometheus" % FlinkVersion
     )
   )
 
-val SparkVersion = "2.4.5"
+val SparkVersion  = "2.4.5"
+val doobieVersion = "0.9.0"
 lazy val sparkStream = (project in file("spark-stream"))
   .settings(
     name := "spark-stream",
     scalaVersion := "2.12.10",
     libraryDependencies ++= Seq(
-      "org.apache.spark" %% "spark-core" % SparkVersion
+      "org.apache.spark" %% "spark-core"      % SparkVersion,
+      "org.apache.spark" %% "spark-sql"       % SparkVersion,
+      "org.tpolecat"     %% "doobie-core"     % doobieVersion,
+      "org.tpolecat"     %% "doobie-postgres" % doobieVersion,
+      "org.tpolecat"     %% "doobie-specs2"   % doobieVersion
     )
   )
